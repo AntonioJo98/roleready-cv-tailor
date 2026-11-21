@@ -20,7 +20,7 @@ function parseSections(text){
  for(const line of lines){ if(heading.test(line)){current=line;sections[current]=[];} else sections[current].push(line); }
  return sections;
 }
-function findSection(sections,pattern){ const key=Object.keys(sections).find(k=>pattern.test(k)); return key?sections[key]:[]; }
+function collectBlock(lines,startRe,stopRe){ const i=lines.findIndex(x=>startRe.test(x)); if(i<0)return []; const out=[]; for(let n=i+1;n<lines.length;n++){ if(stopRe.test(lines[n])) break; out.push(lines[n]); } return out.filter(Boolean); }
 function parseName(text){ return cleanText(text).split('\n').find(x=>/^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ .'-]{2,48}$/.test(x) && !/curriculum|resume|cv/i.test(x)) || 'Candidate'; }
 function extractContact(text){ return cleanText(text).split('\n').slice(0,8).filter(x=>/@|\+?\d[\d ()-]{6,}|linkedin|\.com|Almada|Lisbon|Lisboa/i.test(x)).join(' · '); }
 
@@ -51,10 +51,11 @@ const dz=$('dropzone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(
 function build(){
  alertUser(''); const cv=state.cvText, jd=state.jobText; const name=parseName(cv); const cvWords=words(cv), jdWords=words(jd); const matched=jdWords.filter(w=>cvWords.includes(w)).slice(0,12); const missing=jdWords.filter(w=>!cvWords.includes(w)).slice(0,7); const role=titleFromJob(jd,$('jobUrl').value);
  const summary=`Early-career candidate targeting <b>${esc(role)}</b>, bringing evidence from the uploaded CV: structured analysis, transferable experience and a demonstrated willingness to learn. This version prioritises truthful overlaps with the vacancy language and does not add unsupported tools, seniority or achievements.`;
- const sections=parseSections(cv);
- const experience=findSection(sections,/^professional experience/i).length?findSection(sections,/^professional experience/i):findSection(sections,/^(work experience|experience|experiência)/i);
- const education=findSection(sections,/^(education|formação)/i).slice(0,10);
- const skills=findSection(sections,/^(technical|relevant|skills|competencies|competências)/i).slice(0,15);
+ const sections=parseSections(cv); const lines=cleanText(cv).split('\n');
+ const stopHead=/^(profile|summary|education.*|skills.*|technical.*|relevant.*|competencies.*|professional experience|work experience|experience|formação.*|experiência.*|competências.*|target.*)$/i;
+ const experience=collectBlock(lines,/^(professional experience|work experience|experiência profissional)$/i,stopHead);
+ const education=collectBlock(lines,/^(education.*|formação.*)$/i,stopHead);
+ const skills=collectBlock(lines,/^(skills.*|technical.*|relevant.*|competencies.*|competências.*)$/i,stopHead);
  const rawGeneral=sections.General.slice(0,8);
  const fallbackExp=experience.length?experience:rawGeneral.filter(x=>/\b(20\d{2}|experience|leroy|mcdonald|worten|oceanário|company|merlin)\b/i.test(x)).slice(0,10);
  const expHtml=fallbackExp.length?fallbackExp.map(x=>`<p class="role">${esc(x)}</p>`).join(''):'<p class="empty-state">No clearly labelled experience section was detected. Review the source CV and paste a clearer version if needed.</p>';
