@@ -15,7 +15,7 @@ function titleFromJob(text,url){
 }
 function parseSections(text){
  const lines=cleanText(text).split('\n').map(x=>x.trim()).filter(Boolean);
- const heading=/^(profile|summary|about me|experience|professional experience|work experience|education.*|skills.*|competencies.*|technical skills.*|relevant skills.*|formação.*|experiência.*|competências.*|perfil|contact.*|contactos|languages|idiomas|projects|projectos|training|target.*)$/i;
+ const heading=/^(profile|summary|about me|professional experience|work experience|experience|education.*|skills.*|competencies.*|technical skills.*|relevant skills.*|formação.*|experiência.*|competências.*|perfil|contact.*|contactos|languages|idiomas|projects|projectos|training|target.*)$/i;
  const sections={General:[]}; let current='General';
  for(const line of lines){ if(heading.test(line)){current=line;sections[current]=[];} else sections[current].push(line); }
  return sections;
