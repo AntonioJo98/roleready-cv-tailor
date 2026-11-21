@@ -52,9 +52,9 @@ function build(){
  alertUser(''); const cv=state.cvText, jd=state.jobText; const name=parseName(cv); const cvWords=words(cv), jdWords=words(jd); const matched=jdWords.filter(w=>cvWords.includes(w)).slice(0,12); const missing=jdWords.filter(w=>!cvWords.includes(w)).slice(0,7); const role=titleFromJob(jd,$('jobUrl').value);
  const summary=`Early-career candidate targeting <b>${esc(role)}</b>, bringing evidence from the uploaded CV: structured analysis, transferable experience and a demonstrated willingness to learn. This version prioritises truthful overlaps with the vacancy language and does not add unsupported tools, seniority or achievements.`;
  const sections=parseSections(cv);
- const experience=findSection(sections,/^(professional experience|work experience|experience|experiência)/i).slice(0,18);
+ const experience=findSection(sections,/^professional experience/i).length?findSection(sections,/^professional experience/i):findSection(sections,/^(work experience|experience|experiência)/i);
  const education=findSection(sections,/^(education|formação)/i).slice(0,10);
- const skills=findSection(sections,/^(skills|competencies|technical|relevant|competências)/i).slice(0,15);
+ const skills=findSection(sections,/^(technical|relevant|skills|competencies|competências)/i).slice(0,15);
  const rawGeneral=sections.General.slice(0,8);
  const fallbackExp=experience.length?experience:rawGeneral.filter(x=>/\b(20\d{2}|experience|leroy|mcdonald|worten|oceanário|company|merlin)\b/i.test(x)).slice(0,10);
  const expHtml=fallbackExp.length?fallbackExp.map(x=>`<p class="role">${esc(x)}</p>`).join(''):'<p class="empty-state">No clearly labelled experience section was detected. Review the source CV and paste a clearer version if needed.</p>';
