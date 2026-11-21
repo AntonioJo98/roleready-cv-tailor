@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Private, evidence-first CV tailoring in your browser." />
+  <title>RoleReady — Evidence-first CV builder</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">R</span><span>RoleReady</span></div>
+      <div class="privacy"><span class="dot"></span> Private by design · browser-only</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">Evidence-first CV tailoring</div>
+        <h1>One vacancy.<br><em>One sharper CV.</em></h1>
+        <p class="hero-copy">Upload a CV, paste a vacancy link, and get a recruiter-friendly version built from the candidate’s real evidence — not invented skills.</p>
+        <div class="hero-notes"><span>↗ No account</span><span>✦ No database</span><span>⌁ No hidden uploads</span></div>
+      </section>
+
+      <section class="workspace">
+        <div class="steps">
+          <div class="step active"><span>01</span><div><b>Candidate CV</b><small>PDF, DOCX, TXT or MD</small></div></div>
+          <div class="step"><span>02</span><div><b>Vacancy</b><small>Link or pasted description</small></div></div>
+          <div class="step"><span>03</span><div><b>Tailored output</b><small>Review, then download</small></div></div>
+        </div>
+
+        <div class="cards">
+          <section class="card cv-card">
+            <div class="card-head"><div class="icon blue">CV</div><div><h2>Candidate CV</h2><p>Used only in this browser session.</p></div></div>
+            <label class="dropzone" id="dropzone" for="cvFile"><span class="upload-icon">↑</span><strong>Drop a file here</strong><span>or <u>browse your device</u></span><small>PDF · DOCX · TXT · MD</small></label>
+            <input id="cvFile" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden />
+            <div class="file-status" id="cvStatus">No file selected</div>
+            <textarea id="cvText" class="manual-text" placeholder="If extraction fails, paste the CV text here…" aria-label="CV text fallback"></textarea>
+          </section>
+
+          <section class="card job-card">
+            <div class="card-head"><div class="icon coral">JD</div><div><h2>Vacancy</h2><p>We extract the role language and requirements.</p></div></div>
+            <label class="field-label" for="jobUrl">Vacancy link</label>
+            <div class="url-row"><input id="jobUrl" type="url" placeholder="https://…" /><button id="fetchJob" class="secondary">Read link</button></div>
+            <div class="or"><span>or paste the description</span></div>
+            <textarea id="jobText" class="job-text" placeholder="Paste the ‘About the job’ text here if the site blocks browser reading…" aria-label="Vacancy description"></textarea>
+            <div class="file-status" id="jobStatus">No vacancy loaded</div>
+          </section>
+        </div>
+
+        <div class="action-row"><div class="privacy-inline">🔒 Your files are processed locally and cleared when you refresh.</div><button id="buildCv" class="primary" disabled>Build tailored CV <span>→</span></button></div>
+        <div class="alert" id="alert" role="status"></div>
+      </section>
+
+      <section class="output-wrap" id="outputWrap" hidden>
+        <div class="output-head"><div><div class="eyebrow">03 · Tailored output</div><h2>Review before you send</h2><p>Every claim below comes from the uploaded CV. Edit the source, not the generated facts.</p></div><div class="output-actions"><button id="downloadPdf" class="primary">Download PDF <span>↓</span></button><button id="clearAll" class="ghost">Clear session</button></div></div>
+        <div class="fit-strip" id="fitStrip"></div>
+        <article class="cv-paper" id="cvPaper"></article>
+      </section>
+    </main>
+    <footer><span>RoleReady · a private candidate-side tool</span><span>Share the app, not the candidate data.</span></footer>
+  </div>
+</body>
+</html>
