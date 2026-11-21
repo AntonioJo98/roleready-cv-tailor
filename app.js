@@ -24,7 +24,8 @@ function parseName(text){ return cleanText(text).split('\n').find(x=>/^[A-Za-zÀ
 function extractContact(text){ return cleanText(text).split('\n').slice(0,8).filter(x=>/@|\+?\d[\d ()-]{6,}|linkedin|\.com|Almada|Lisbon|Lisboa/i.test(x)).join(' · '); }
 
 async function extractPdf(file){
- if(!window.pdfjsLib){ const mod=await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs'); window.pdfjsLib=mod; window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs'; }
+ if(!window.pdfjsLib) throw new Error('PDF reader is still loading. Refresh once and try again.');
+ window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
  const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:buf}).promise; let out='';
  for(let i=1;i<=pdf.numPages;i++){ const page=await pdf.getPage(i); const c=await page.getTextContent(); out+=c.items.map(x=>x.str).join(' ')+'\n'; }
  return out;
